@@ -33,6 +33,10 @@ import {
   cifPl
 } from '@coreui/icons'
 import {
+  cilCommentBubble,
+  cilTrash,
+  cilSearch,
+  cilClipboard,
   cilTruck,
   cilLibrary,
   cilArrowRight,
@@ -44,6 +48,7 @@ import {
   cilCart,
   cilCalculator,
   cilCalendar,
+  cilFastfood,
   cilCloudDownload,
   cilChartPie,
   cilCheck,
@@ -93,6 +98,12 @@ export const iconsSet = Object.assign(
   {},
   { logo },
   {
+  cilTrash,
+  cilCommentBubble,
+
+    cilSearch,
+    cilClipboard,
+    cilFastfood,
     cilHouse,
     cilTruck,
     cilLibrary,

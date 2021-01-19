@@ -10,43 +10,55 @@
             </div>
           </CCardHeader>
           <CCardBody>
+      <form @submit.prevent="handleSubmit">
             <CRow>
               <CCol sm="12">
                 <CInput
                   label="Nombre"
                   placeholder=""
+                  v-model="nombre"
                 />
               </CCol>
+              <div class="col-12" align="center" v-if="$v.nombre.$dirty">
+                <div v-if="!$v.nombre.required" class="col-12 alert alert-danger" role="alert">
+                    <strong>Cuidado!</strong> Este campo es requerido
+                </div>
+              </div>
             </CRow>
             <CRow>
               <CCol sm="12">
                 <CInput
                   label="Descripcion"
+                  v-model="descripcion"
                   placeholder=""
                 />
               </CCol>
+              <div class="col-12" align="center" v-if="$v.descripcion.$dirty">
+                <div v-if="!$v.descripcion.required" class="col-12 alert alert-danger" role="alert">
+                    <strong>Cuidado!</strong> Este campo es requerido
+                </div>
+              </div>
             </CRow>
             <CRow>
               <CCol sm="12">
                 <CInput
                   label="Codigo"
+                  v-model="codigo"
                   placeholder=""
                 />
               </CCol>
+              <div class="col-12" align="center" v-if="$v.codigo.$dirty">
+                <div v-if="!$v.codigo.required" class="col-12 alert alert-danger" role="alert">
+                    <strong>Cuidado!</strong> Este campo es requerido
+                </div>
+              </div>
             </CRow>
             <CRow>
               <CCol sm="12">
                 <CSelect
-                  label="Rubro"
+                  v-model="categoria"
+                  label="Categoria"
                   :options="['Herramientas','Focos']"
-                />
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol sm="12">
-                <CSelect
-                  label="Subrubro"
-                  :options="['Herramientas Mecanicas','Herramientas Manuales']"
                 />
               </CCol>
             </CRow>
@@ -54,6 +66,7 @@
               <CCol sm="12">
                 <CInput
                   label="Precio de Venta"
+                  v-model="precio_de_venta"
                   placeholder=""
                 />
               </CCol>
@@ -62,6 +75,7 @@
               <CCol sm="12">
                 <CInput
                   label="Stock Minimo"
+                  v-model="stock_minimo"
                   placeholder=""
                 />
               </CCol>
@@ -70,6 +84,7 @@
               <CCol sm="12">
                 <CInputFile
                   label="Seleccionar imagen..."
+                  v-model="imagen"
                   horizontal
                 />
               </CCol>
@@ -80,10 +95,74 @@
                     <CButton type="submit"  color="primary">CREAR</CButton>
                 </CCol>
             </CRow>
-
+      </form>
           </CCardBody>
         </CCard>
       </CCol>
     </CRow>
     </div>
 </template>
+
+<script>
+import {
+  required,
+} from "vuelidate/lib/validators";
+
+export default {
+  data() {
+    return {
+      nombre : '',
+      descripcion : '',
+      codigo : '',
+      categoria : '',
+      precio_de_venta : '',
+      stock_minimo : '',
+      imagen : '',
+    }
+  },
+  validations: {
+        nombre: {
+            required
+        },
+        descripcion: {
+            required
+        },
+        codigo: {
+            required
+        },
+        stock_minimo: {
+            required
+        },
+  },  
+  methods: {
+    guardarProducto(){
+      let datos = new FormData();
+      datos.append('nombre',this.nombre);
+      datos.append('descripcion',this.descripcion);
+      datos.append('stock_minimo',this.stock_minimo);
+      datos.append('precio_venta',this.precio_venta);
+      datos.append('categoria_id','1');
+      datos.append('codigo',this.codigo);
+      datos.append('imagen',this.imagen);
+
+      var url = "api/producto";
+        axios
+          .post(url, 
+            datos
+          )
+          .then(response => {
+            console.log(response);
+          });
+    },
+    handleSubmit(e) {
+      this.submitted = true;
+      // stop here if form is invalid
+      this.$v.$touch();
+      if (this.$v.$invalid) {
+        return;
+      }
+      this.guardarProducto();
+    },
+  },
+}
+</script>

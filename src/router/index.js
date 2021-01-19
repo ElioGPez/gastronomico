@@ -34,6 +34,8 @@ const Mostrador = () => import('@/paginas/negocio/mostrador/index')
 
 const MesaConfigurar = () => import('@/paginas/configuraciones/mesas/index')
 
+const Pedido = () => import('@/paginas/mozo/pedido/index')
+
 //Fin paginas
 
 
@@ -195,7 +197,24 @@ function configRoutes () {
             }*/
           ]
         },
-
+        {
+          path: 'mozo',
+          meta: {
+            label: 'Mozo'
+          },
+          component: {
+            render(c) {
+              return c('router-view')
+            }
+          },
+          children: [
+            {
+              path: 'pedido',
+              name: 'Pedido',
+              component: Pedido
+            },
+          ]
+        },
         {
           path: 'compras',
           meta: {

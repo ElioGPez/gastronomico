@@ -12,7 +12,7 @@
           </CCardHeader>
                     <CCardBody>
                         <CRow class="p-3">
-                            <CCol v-for="item in mesas" :key="item.id" class="mb-4" sm="3" lg="3" md="3" xs="3" >
+                            <CCol v-for="item in $store.getters.mesas" :key="item.id" class="mb-4" sm="3" lg="3" md="3" xs="3" >
                                 <div class="row">
                                     <button @click="mesaClick(item.id)" :class="{'mesa-seleccionada' : item.select }" v-if="item.estado=='libre'" type="button" class="mesa btn btn-success"><h5>{{item.numero}}</h5></button>
                                     <button @click="mesaClick(item.id)" :class="{'mesa-seleccionada' : item.select }" v-else type="button" class="mesa btn btn-danger"><h5>{{item.numero}}</h5></button>
@@ -30,7 +30,7 @@
                     <CCollapse :show="formCollapsed">
           <CCardHeader class="card-titulo">
                         <div class="col-12" align="center">
-                            <h4>DETALLE MESA {{mesas[id].numero}}</h4>
+                            <h4>DETALLE MESA {{$store.getters.mesas[id].numero}}</h4>
                         </div>
           </CCardHeader>
                     <CCardBody class="p-0">
@@ -40,7 +40,7 @@
                           <h6>CLIENTE </h6>
                       </CCol>
                       <CCol sm="4">
-                          <h6>{{mesas[id].detalle.cliente.nombre}}</h6>
+                          <h6>{{$store.getters.mesas[id].detalle.cliente.nombre}}</h6>
                       </CCol>
                   </CRow>
                   <CRow>
@@ -48,7 +48,7 @@
                           <h6>MOZO </h6>
                       </CCol>
                       <CCol sm="4">
-                          <h6>{{mesas[id].detalle.mozo.nombre}}</h6>
+                          <h6>{{$store.getters.mesas[id].detalle.mozo.nombre}}</h6>
                       </CCol>
                   </CRow>
                   <CRow>
@@ -56,7 +56,7 @@
                           <h6>PERSONAS </h6>
                       </CCol>
                       <CCol sm="4">
-                          <h6>{{mesas[id].detalle.personas}}</h6>
+                          <h6>{{$store.getters.mesas[id].detalle.personas}}</h6>
                       </CCol>
                   </CRow>
                 </CCol>
@@ -88,7 +88,7 @@
             </tr>
         </thead>
         <tbody align="center">
-            <tr v-for="item in mesas[id].linea_venta" :key="item.id">
+            <tr v-for="item in $store.getters.mesas[id].linea_venta" :key="item.id">
             <td>{{item.producto.nombre}}</td>
             <td>{{item.cantidad}}</td>
             <td>{{item.subtotal}}</td>
@@ -342,6 +342,21 @@ export default {
            // mesa1.detalle = detalle;
             this.mesas.push(mesa);
             this.mesas.push(mesa1);
+            
+            for (let index = 0; index < 8; index++) {
+                var mesa1 = new Object();
+                mesa1.id = index+2;
+                mesa1.numero = index+3;
+                mesa1.estado = 'libre'
+                mesa1.select = false;
+                mesa1.linea_venta = [];
+                var detalle = new Object();
+                detalle.mozo = '';
+                detalle.cliente = '';
+                detalle.personas = '';
+                mesa1.detalle = detalle;
+                this.mesas.push(mesa1);
+            }
 
             //Productos
             var producto = new Object();
@@ -367,10 +382,15 @@ export default {
             this.listado_productos.push(producto);
             this.listado_productos.push(producto1);
 
+            //Dar valor inicial a las mesas
+            if(this.$store.getters.mesas == ''){
+                //Igualamos los valores iniciales a la variable del store
+                this.$store.commit('iniciarMesas', this.mesas);
+            }
         },
         mesaClick(id){
             console.log("id: "+id)
-            this.mesas.forEach(element => {
+            this.$store.getters.mesas.forEach(element => {
                 if(element.id == id){
                     element.select = true;
                     this.id = id;
@@ -379,7 +399,7 @@ export default {
                 }
             });
                 console.log(this.mesas[id])
-            if(this.mesas[id].estado == 'libre'){
+            if(this.$store.getters.mesas[id].estado == 'libre'){
                 console.log('mesa libre!!')
                 this.id = id;
                 this.mesaModal = true;
@@ -389,7 +409,7 @@ export default {
         },
         abrirMesa(){
             //Asignamos los valores a la respectiva mesa
-            console.log(this.mesas[this.id].detalle.mozo)
+            console.log(this.$store.getters.mesas[this.id].detalle.mozo)
             this.mesas[this.id].detalle.mozo = this.mozo;
             this.mesas[this.id].detalle.cliente = this.cliente;
             this.mesas[this.id].detalle.personas= 5;
@@ -409,7 +429,7 @@ export default {
             linea.cantidad = this.cantidad;
             linea.producto = this.producto;
             linea.subtotal = this.cantidad * this.producto.precio;
-            this.mesas[this.id].linea_venta.push(linea);
+            this.$store.getters.mesas[this.id].linea_venta.push(linea);
 
             this.total += linea.subtotal;
         }   

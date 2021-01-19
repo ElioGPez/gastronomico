@@ -9,6 +9,7 @@ const state = {
   linea_venta : 'hols',
   producto : 'sd',
   dark : false,
+  mesas : '',
 }
 
 const mutations = {
@@ -25,6 +26,9 @@ const mutations = {
     //state.status = 'success'
     //state.linea_venta.push(producto);
     state.producto = producto;
+  },
+  iniciarMesas(state, mesas){
+    state.mesas = mesas;
   },
   limpiarProducto(state){
     //state.status = 'success'
@@ -48,6 +52,7 @@ const getters = {
   //Devuelve TRUE si existe el token
   linea_venta: state => state.linea_venta,
   producto: state => state.producto,
+  mesas: state => state.mesas,
   dark:state => state.dark,
 }
 

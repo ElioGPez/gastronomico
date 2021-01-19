@@ -55,6 +55,22 @@ export default [
       },
       {
         _name: 'CSidebarNavDropdown',
+        name: 'Mozo',
+        route: '/buttons',
+        icon: 'cil-clipboard',
+        items: [
+          {
+            name: 'Pedido',
+            to: '/mozo/pedido'
+          },
+          /*{
+            name: 'Listado',
+            to: '/caja'
+          },*/
+        ]
+      },
+      {
+        _name: 'CSidebarNavDropdown',
         name: 'Ventas',
         route: '/buttons',
         icon: 'cil-cart',
@@ -110,7 +126,7 @@ export default [
         _name: 'CSidebarNavDropdown',
         name: 'Productos',
         route: '/productos',
-        icon: 'cil-settings',
+        icon: 'cil-fastfood',
         items: [
           {
             name: 'Nuevo Producto',
