@@ -33,6 +33,7 @@ import {
   cifPl
 } from '@coreui/icons'
 import {
+  cilColorBorder,
   cilCommentBubble,
   cilTrash,
   cilSearch,
@@ -89,7 +90,8 @@ import {
   cilUser,
   cilUserFemale,
   cilUserFollow,
-  cilXCircle
+  cilXCircle,
+  cilInfo,
 
 } from '@coreui/icons'
 import { logo } from './logo'
@@ -98,9 +100,10 @@ export const iconsSet = Object.assign(
   {},
   { logo },
   {
+    cilInfo,
   cilTrash,
   cilCommentBubble,
-
+    cilColorBorder,
     cilSearch,
     cilClipboard,
     cilFastfood,

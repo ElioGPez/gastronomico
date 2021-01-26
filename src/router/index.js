@@ -25,6 +25,11 @@ const SubRubrosCrear = () => import('@/paginas/rubros/subrubro/crear/index')
 
 const Productos = () => import('@/paginas/productos/index')
 const ProductosCrear = () => import('@/paginas/productos/crear/index')
+const ProductosEditar = () => import('@/paginas/productos/editar/index')
+
+const Ingredientes = () => import('@/paginas/ingredientes/index')
+const IngredientesCrear = () => import('@/paginas/ingredientes/crear/index')
+const IngredientesEditar = () => import('@/paginas/ingredientes/editar/index')
 
 const Proveedores = () => import('@/paginas/proveedores/index')
 const ProveedoresCrear = () => import('@/paginas/proveedores/crear/index')
@@ -131,11 +136,7 @@ function configRoutes () {
         },
         
 
-        {
-          path: 'home',
-          name: 'Home',
-          component: Home
-        },
+
         {
           path: '/caja/apertura_caja',
           name: 'AperturaCaja',
@@ -283,9 +284,41 @@ function configRoutes () {
               name: 'productos_crear',
               component: ProductosCrear
             },
+            {
+              path: 'editar/:id',
+              name: 'productos_editar',
+              component: ProductosEditar
+            },
           ]
         },
-
+        {
+          path: 'ingredientes',
+          meta: {
+            label: 'Ingredientes'
+          },
+          component: {
+            render(c) {
+              return c('router-view')
+            }
+          },
+          children: [
+            {
+              path: '',
+              name: 'Ingredientes',
+              component: Ingredientes
+            },
+            {
+              path: 'crear',
+              name: 'ingredientes_crear',
+              component: IngredientesCrear
+            },
+            {
+              path: 'editar/:id',
+              name: 'ingredientes_editar',
+              component: IngredientesEditar
+            },
+          ]
+        },
         {
           path: 'configuracion',
           meta: {

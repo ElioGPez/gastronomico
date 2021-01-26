@@ -279,11 +279,7 @@ export default {
       justify-content: center;
       align-items: center;
     }
-    .center{
-      display:flex;
-      justify-content: center;
-      align-items: center;
-    }
+
     .cantidad{
       width: 10pt;
       padding: 0 3pt 0 3pt;

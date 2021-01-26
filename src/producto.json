@@ -1,0 +1,13 @@
+[
+    {
+        "nombre":"Pizza Muzza",
+        "descripcion":"Muzzarella con mucho queso",
+        "unidad_de_compra":"Unidad",
+        "unidad_de_consumo":"Unidad",
+        "codigo":"123",
+        "categoria":"Pizzas",
+        "precio_de_venta":"450",
+        "stock_minimo":"",
+        "imagen":""
+    }
+]

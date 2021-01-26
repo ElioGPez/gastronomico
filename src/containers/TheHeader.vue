@@ -11,7 +11,7 @@
       @click="$store.commit('toggleSidebarDesktop')"
     />
     <CHeaderBrand class="mx-auto d-lg-none" to="/">
-      <img src="img/logo-ferreteria.png" class="logo-img"> <h3 class="logo">Restaurante</h3>
+     <h3 class="logo">Restaurante</h3>
     </CHeaderBrand>
     <!--CHeaderNav class="d-md-down-none mr-auto">
       <CHeaderNavItem class="px-3">

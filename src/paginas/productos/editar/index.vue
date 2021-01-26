@@ -4,9 +4,9 @@
       <CCol sm="7">
         <CCard>
           <CCardHeader>
-            <strong>CREAR PRODUCTO</strong>
+            <strong>EDITAR PRODUCTO</strong>
             <div class="card-header-actions">
-
+              {{producto}}
             </div>
           </CCardHeader>
           <CCardBody>
@@ -16,11 +16,11 @@
                 <CInput
                   label="Nombre"
                   placeholder=""
-                  v-model="nombre"
+                  v-model="producto.nombre"
                 />
               </CCol>
-              <div class="col-12" align="center" v-if="$v.nombre.$dirty">
-                <div v-if="!$v.nombre.required" class="col-12 alert alert-danger" role="alert">
+              <div class="col-12" align="center" v-if="$v.producto.nombre.$dirty">
+                <div v-if="!$v.producto.nombre.required" class="col-12 alert alert-danger" role="alert">
                     <strong>Cuidado!</strong> Este campo es requerido
                 </div>
               </div>
@@ -29,12 +29,12 @@
               <CCol sm="12">
                 <CInput
                   label="Descripcion"
-                  v-model="descripcion"
+                  v-model="producto.descripcion"
                   placeholder=""
                 />
               </CCol>
-              <div class="col-12" align="center" v-if="$v.descripcion.$dirty">
-                <div v-if="!$v.descripcion.required" class="col-12 alert alert-danger" role="alert">
+              <div class="col-12" align="center" v-if="$v.producto.descripcion.$dirty">
+                <div v-if="!$v.producto.descripcion.required" class="col-12 alert alert-danger" role="alert">
                     <strong>Cuidado!</strong> Este campo es requerido
                 </div>
               </div>
@@ -43,12 +43,12 @@
               <CCol sm="12">
                 <CInput
                   label="Codigo"
-                  v-model="codigo"
+                  v-model="producto.codigo"
                   placeholder=""
                 />
               </CCol>
-              <div class="col-12" align="center" v-if="$v.codigo.$dirty">
-                <div v-if="!$v.codigo.required" class="col-12 alert alert-danger" role="alert">
+              <div class="col-12" align="center" v-if="$v.producto.codigo.$dirty">
+                <div v-if="!$v.producto.codigo.required" class="col-12 alert alert-danger" role="alert">
                     <strong>Cuidado!</strong> Este campo es requerido
                 </div>
               </div>
@@ -56,7 +56,7 @@
             <CRow>
               <CCol sm="12">
                 <CSelect
-                  v-model="categoria"
+                  v-model="producto.categoria"
                   label="Categoria"
                   :options="['Herramientas','Focos']"
                 />
@@ -66,7 +66,7 @@
               <CCol sm="12">
                 <CInput
                   label="Unidad de Compra"
-                  v-model="unidad_de_compra"
+                  v-model="producto.unidad_de_compra"
                   placeholder=""
                 />
               </CCol>
@@ -75,7 +75,7 @@
               <CCol sm="12">
                 <CInput
                   label="Unidad de Consumo"
-                  v-model="unidad_de_consumo"
+                  v-model="producto.unidad_de_consumo"
                   placeholder=""
                 />
               </CCol>
@@ -84,7 +84,7 @@
               <CCol sm="12">
                 <CInput
                   label="Precio de Venta"
-                  v-model="precio_de_venta"
+                  v-model="producto.precio_de_venta"
                   placeholder=""
                 />
               </CCol>
@@ -93,7 +93,7 @@
               <CCol sm="12">
                 <CInput
                   label="Stock Minimo"
-                  v-model="stock_minimo"
+                  v-model="producto.stock_minimo"
                   placeholder=""
                 />
               </CCol>
@@ -102,7 +102,7 @@
               <CCol sm="12">
                 <CInputFile
                   label="Seleccionar imagen..."
-                  v-model="imagen"
+                  v-model="producto.imagen"
                   horizontal
                 />
               </CCol>
@@ -110,7 +110,7 @@
 <hr>
             <CRow>
                 <CCol align="center">
-                    <CButton type="submit"  color="danger">CREAR</CButton>
+                    <CButton type="submit"  color="danger">EDITAR</CButton>
                 </CCol>
             </CRow>
       </form>
@@ -129,7 +129,7 @@ import {
   required,
 } from "vuelidate/lib/validators";
 import Insumos from '../../../components/productos/Insumos'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: { Insumos},
@@ -145,11 +145,17 @@ export default {
       precio_de_venta : '',
       stock_minimo : '',
       imagen : '',
-      
+     // producto:[]
+      //producto : []
     }
   },
+  mounted() {
+  //  this.producto = this.product;
+    this.obtenerProducto(1);
+  },
   validations: {
-        nombre: {
+    producto: {
+        nombre : {
             required
         },
         descripcion: {
@@ -161,17 +167,16 @@ export default {
         stock_minimo: {
             required
         },
+    }
   },  
   computed: {
     ...mapGetters({
       listado_ingredientes : 'getListadoInsumo',
+      producto : 'getProducto',
     })
   },
-  mounted() {
-    this.vaciarIngredientes();
-  },
   methods: {
-    ...mapMutations(['vaciarIngredientes']),
+    ...mapActions(['obtenerProducto']),
 
     guardarProducto(){
       let datos = new FormData();

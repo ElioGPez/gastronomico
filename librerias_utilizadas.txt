@@ -1,2 +1,3 @@
 Axios
 Vuelidate
+vue-paginate

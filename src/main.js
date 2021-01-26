@@ -8,7 +8,9 @@ import store from './store'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import Vuelidate from 'vuelidate'
+import VuePaginate from 'vue-paginate'
 
+Vue.use(VuePaginate)
 Vue.use(Vuelidate)
 Vue.config.performance = true
 Vue.use(CoreuiVue)

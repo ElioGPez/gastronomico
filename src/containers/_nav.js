@@ -138,7 +138,22 @@ export default [
           },
         ]
       },
-
+      {
+        _name: 'CSidebarNavDropdown',
+        name: 'Ingredientes',
+        route: '/ingredientes',
+        icon: 'cil-fastfood',
+        items: [
+          {
+            name: 'Nuevo Ingrediente',
+            to: '/ingredientes/crear'
+          },
+          {
+            name: 'Listado',
+            to: '/ingredientes'
+          },
+        ]
+      },
       {
         _name: 'CSidebarNavDropdown',
         name: 'Proveedores',
