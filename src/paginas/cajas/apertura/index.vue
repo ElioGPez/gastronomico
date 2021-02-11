@@ -19,17 +19,29 @@
             <CCollapse :show="formCollapsed">
               <CCardBody>
             <CRow>
-              <CCol tag="label" sm="6" class="col-form-label">
+
+              <CCol sm="4"  class="col-form-label" >
+              <CSelect
+              :value.sync="caja"
+                label="Caja"
+                horizontal
+                :options="options"
+                placeholder="Seleccione la Caja..."
+              />
+              </CCol>
+              <CCol tag="label" class="col-form-label" sm="5">
                 <CInput
+                v-model="monto_inicial"
                   label="Monto Inicial"
                   horizontal
                   autocomplete="monto_inicial"
                   type="numer"
                 />
               </CCol>
-              <CCol sm="3"  class="col-form-label">
-                <CButton type="submit" color="primary">AGREGAR</CButton>
+              <CCol sm="2" class="col-form-label">
+                <CButton @click="abrirCaja()" type="submit" color="primary">AGREGAR</CButton>
               </CCol>
+
             </CRow>
               </CCardBody>
             </CCollapse>
@@ -39,8 +51,9 @@
     </CRow>
         <CRow>
         <CCol sm="12">
-            <CTableWrapper
-            :items="getShuffledUsersData()"
+            <CTableWrapper 
+            :origen="'apertura'"
+            :items="cajas_abiertas"
             :fields="getCabecera()"
             hover
             striped
@@ -55,8 +68,9 @@
 </template>
 
 <script>
-import CTableWrapper from '../../../views/base/Table.vue'
+import CTableWrapper from '../../../components/listados/Listado'
 import Datos from '../../../views/users/Datos.js'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   name: 'Tables',
@@ -66,28 +80,58 @@ export default {
       selected: [], // Must be an array reference!
       show: true,
       horizontal: { label:'col-3', input:'col-9' },
-      options: ['Caja 1', 'Caja 2', 'Caja 3'],
-      selectedOption: 'some value',
-
+      options : [],
+      monto_inicial: '',
+      caja: '',
+      //cajas_abiertas : [],
       formCollapsed: true,
     }
   },
+  mounted() {
+    this.getOpciones();
+  },
+  computed: {
+      ...mapGetters({
+        cajas : 'cajas',
+        cajas_abiertas : 'cajas_abiertas'
+      })  
+  },
   methods: {
-    shuffleArray (array) {
-     /* for (let i = array.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1))
-        let temp = array[i]
-        array[i] = array[j]
-        array[j] = temp
-      }*/
-      return array
-    },
 
-    getShuffledUsersData () {
-      return this.shuffleArray(Datos)
+    ...mapMutations(['aperturaCaja','limpiarProducto']),
+    abrirCaja(){
+        //Fecha y Hora
+        var hoy = new Date();
+        var hora = hoy.getHours() + ":" + hoy.getMinutes();
+
+        var caja = new Object();
+        caja.monto_inicial = this.monto_inicial;    
+        caja.hora_inicio = hora; 
+        caja.hora_fin = ''; 
+        caja.diferencia = ''; 
+        caja.monto_real = ''; 
+        caja.opciones = 'caja';
+        caja.usuario = 'Gomez';
+        caja.estado = 'ABIERTA';
+        caja.caja_id = this.caja;
+        caja.id = '0';
+        //console.log('id= '+this.caja);
+        this.monto_inicial = '';
+        
+        this.aperturaCaja(caja);
+
+    },
+    getOpciones(){
+      
+      this.cajas.forEach(element => {
+        var value = new Object();
+        value.value = element.id;
+        value.label = element.nombre;
+        this.options.push(value);
+      });
     },
     getCabecera(){
-      return [ 'usuario', 'monto_inicial', 'monto_real','diferencia','hora_inicio','hora_fin','opciones','status']
+      return [ 'usuario', 'monto_inicial','hora_inicio','opciones']
     }
   }
 }

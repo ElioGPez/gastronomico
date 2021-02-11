@@ -1,4 +1,5 @@
 <template>
+<div>
   <CCard>
     <CCardHeader>
       <slot name="header">
@@ -20,6 +21,7 @@
       </CRow>
         <!-- TABLA -->
       <CDataTable class="p-0"
+        @row-clicked="algo"
         :hover="hover"
         :striped="striped"
         :bordered="bordered"
@@ -31,18 +33,21 @@
         :dark="dark"
         pagination
       >
+
+
         <template #opciones="{item}">
           <td>
             <CButton @click="detalleVenta()" v-if="item.opciones=='venta' && item.estado == 'Activa'" color="primary">CERRAR</CButton>
             <CButton  v-else-if="item.opciones=='venta' && item.estado == 'Cerrada'" color="secondary">DETALLES</CButton>
-            <CButton v-else color="danger">Cerrar Caja</CButton>
+            <CButton v-else-if="origen == 'apertura'" @click="cerrarCaja(item.id)" color="danger">Cerrar Caja</CButton>
+            <CButton v-else  color="secondary">Detalles</CButton>
           </td>
         </template>
         <template #acciones="{item}">
           <td v-if="origen!='ingrediente'">
             <CButton class="ml-1" color="warning">
                 <router-link :to="{
-                        name : 'productos_editar',
+                        name : ruta,
                         params : {id : item.id}
                                     }"
                 >
@@ -64,21 +69,30 @@
       </CDataTable>
     </CCardBody>
   </CCard>
+
+  <CierreCaja :caja="caja" :cajaModal="ModalCaja"/>
+  
+  </div>
 </template>
 
 <script>
 import { mapMutations } from 'vuex'
+import CierreCaja from "@/components/cajas/Cierre.vue";
 
 
 export default {
+  components:{CierreCaja},
   name: 'Table',
   data() {
       return {
           filtro : '',
+          ModalCaja : false,
+          caja : ''
       }
   },
   props: {
     //Para condicionar ciertos elementos de acuerdo su origen
+    ruta : String,
     origen: String,
     producto:String,
     items: Array,
@@ -102,9 +116,26 @@ export default {
 
     computed: {
       filtroListado(){
+        if(this.origen == 'apertura'){
+            var aux = [];
+            this.items.forEach(element => {
+              if(element.estado == 'ABIERTA'){
+                aux.push(element);
+              }
+            });
+            return aux;
+        }else
+        if(this.origen == 'caja'){
+          return this.items;
+        }
+        else{
             var cat = this.items.filter((item) => 
             {
-              return item.nombre.toLowerCase().match(this.filtro.toLowerCase())||item.codigo.toLowerCase().match(this.filtro.toLowerCase());
+              if(this.origen=='ingredientes'){
+                return item.nombre.toLowerCase().match(this.filtro.toLowerCase());
+              }else{
+                return item.nombre.toLowerCase().match(this.filtro.toLowerCase())||item.codigo.toLowerCase().match(this.filtro.toLowerCase());
+              }
             });
             //console.log(cat.length);
             if(cat.length != 0){
@@ -119,10 +150,11 @@ export default {
                 var nulos = [nulo];
                 return nulos;
               }
+        }
       }
   },
   methods: {
-    ...mapMutations(['quitarIngrediente']),
+    ...mapMutations(['quitarIngrediente','modalProducto','asignarProducto']),
     getBadge (status) {
       return status === 'Activa' ? 'success'
         : status === 'Inactive' ? 'secondary'
@@ -147,6 +179,22 @@ export default {
     detalleVenta(){
       console.log('detalle');
       this.$router.push('/ventas/detalle');
+    },
+    cerrarCaja(id){
+      console.log(id)
+      this.caja = id;
+      if(this.ModalCaja){
+        this.ModalCaja =false;
+      }else{
+        this.ModalCaja =true;
+      }
+    },
+    algo(item){
+      if(this.origen == 'modalProductos'){
+        console.log(item)
+        this.modalProducto();
+        this.asignarProducto(item);
+      }
     }
   }
 }

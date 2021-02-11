@@ -48,7 +48,8 @@
         <CRow>
         <CCol sm="12">
             <CTableWrapper
-            :items="getShuffledUsersData()"
+            :origen="'caja'"
+            :items="cajas_abiertas"
             :fields="getCabecera()"
             hover
             striped
@@ -63,8 +64,9 @@
 </template>
 
 <script>
-import CTableWrapper from '../../views/base/Table.vue'
+import CTableWrapper from '../../components/listados/Listado'
 import Datos from '../../views/users/Datos.js'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   name: 'Tables',
@@ -80,22 +82,15 @@ export default {
       formCollapsed: true,
     }
   },
+  computed: {
+      ...mapGetters({
+        cajas_abiertas : 'cajas_abiertas',
+      })  
+  },
   methods: {
-    shuffleArray (array) {
-     /* for (let i = array.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1))
-        let temp = array[i]
-        array[i] = array[j]
-        array[j] = temp
-      }*/
-      return array
-    },
 
-    getShuffledUsersData () {
-      return this.shuffleArray(Datos)
-    },
     getCabecera(){
-      return [ 'usuario', 'monto_inicial', 'monto_real','diferencia','hora_inicio','hora_fin','opciones']
+      return [ 'usuario', 'monto_inicial', 'monto_real','diferencia','hora_inicio','hora_fin','estado','opciones']
     }
   }
 }

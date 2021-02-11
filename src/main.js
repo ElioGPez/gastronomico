@@ -18,6 +18,7 @@ Vue.prototype.$log = console.log.bind(console)
 export const rectangle = ['<rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)"/>']
 
 axios.defaults.baseURL = 'https://sistema-gastronomico-api.herokuapp.com/api/';
+axios.defaults.headers.common['Content-Type'] = 'application/json' // for all requests
 
 Vue.use(VueAxios, axios)
 //Axios.defaults.baseURL = 'http://pollosback.ml/';

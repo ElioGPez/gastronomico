@@ -10,7 +10,39 @@
           </CCardHeader>
           <CCardBody class="p-0">
             <CCol class="p-3">
+              <CRow class="mt-1">
+                  <CCol align="right" col="4">
+                    <h6>MESA</h6>
+                  </CCol> 
+                  <CCol  col="8">
+                      <select v-model="item"  class="form-control" id="exampleFormControlSelect1">
+                      <option>Seleccione la Mesa...</option>
+                      <option v-for="item of $store.getters.mesas" :key="item.id" :value="item">{{item.numero}}</option>
+                      </select>
+                  </CCol>
+              </CRow>
               <CRow>
+                <CCol align="right" col="4">
+                  <h6>ESTADO</h6>
+                </CCol>
+                <CCol col="8" class="center">
+                  <CBadge color="primary">{{item.estado}}</CBadge>                
+                </CCol>
+              </CRow>
+              <CRow>
+                <CCol align="right" col="4">
+                  <h6>COMENSALES</h6>
+                </CCol>
+                <CCol col="8">
+                  <input
+                    v-model="item.detalle.personas"
+                    type="text"
+                    placeholder="Comensales..."
+                    class="form-control"
+                  />                
+                </CCol>
+              </CRow>
+              <!--CRow>
                 <CCol align="right" col="4">
                   <h6>CLIENTE</h6>
                 </CCol>
@@ -21,18 +53,7 @@
                     class="form-control"
                   />                
                 </CCol>
-              </CRow>
-            <CRow class="mt-1">
-                <CCol align="right" col="4">
-                  <h6>MESA</h6>
-                </CCol>
-                 <CCol  col="8">
-                    <select  class="form-control" id="exampleFormControlSelect1">
-                    <option>Seleccione la Mesa...</option>
-                    <option v-for="item of $store.getters.mesas" :key="item.id" :value="item">{{item.numero}}</option>
-                    </select>
-                </CCol>
-            </CRow>
+              </CRow-->
             </CCol>
             <CCol class="card-subtitulo" col="12" align="center">
               <h5>PRODUCTOS</h5>
@@ -56,11 +77,12 @@
                     type="text"
                     placeholder="Producto"
                     class="form-control"
+                    disabled
                   />
                 </CCol>
                 <CCol  col="1" class="p-0 center">
                   <CButton class="btn-cantidad"
-                    @click="agregarProducto()"
+                    @click="cantidad--"
                     type="submit"
                     color="warning"
                     >-</CButton>
@@ -75,7 +97,7 @@
                 </CCol>
                 <CCol  col="1" class="p-0 center">
                   <CButton class="btn-cantidad"
-                    @click="agregarProducto()"
+                    @click="cantidad++"
                     type="submit"
                     color="warning"
                     >+</CButton>
@@ -85,10 +107,10 @@
               <CRow  class="pt-1">
                 <CCol class="pl-2 pr-1" col="8">
                   <input
-                    v-model="producto.nombre"
+                    v-model="observaciones"
                     type="text"
                     placeholder="Comentarios"
-                    class="form-control"
+                    class="form-control" 
                   />
                 </CCol>
                 <CCol align="center" class="p-0">
@@ -104,7 +126,7 @@
               <hr>
 
 
-          <div class="lista row">
+          <div class="lista row" v-for="item in item.linea_venta" :key="item.id">
               
               <div class="imagen col-3">
                 <div class="img-container"> 
@@ -114,28 +136,34 @@
               <div class="p-0 col-7">
                   <div class="col-12">
                     <h6 class="mb-0">
-                        PRODUCTO
+                        {{item.producto.nombre}}
                     </h6>
                   </div>
                   <div class="col-10">
                     <h6 class="mb-0">
-                        CANTIDAD: 10
+                        {{ item.cantidad }}
                     </h6>
                   </div>
               </div>
               <div class="col-2 imagen" >
                 <CRow>
                   <CCol col="12" class="mb-1">
-                    <CIcon
-                      name="cil-comment-bubble"
-                      height="18"
-                    />
+                       <CButton v-if="item.observaciones!=''"
+                            color="primary"
+                            v-c-popover="{
+                            header: 'Observacion',
+                            content: item.observaciones,
+                            active: false
+                            }"
+                        ><CIcon name="cil-comment-bubble" height="12" />
+                        </CButton>
                   </CCol>
                   <CCol col="12"> 
-                    <CIcon
+                    <button @click="mesa.linea_venta.splice(item.id,1);quitarProducto(item)" class="btn btn-warning">                    <CIcon
                       name="cil-trash"
                       height="18"
-                    />
+                    /></button>
+
                   </CCol>
                 </CRow>
               </div>
@@ -171,7 +199,7 @@
             <hr />
             <div >
               <!-- Tabla -->
-          <div v-for="item in listado_productos" :key="item.id" class="lista row">
+          <div @click="getProducto(item)" v-for="item in productos" :key="item.id" class="lista row">
               <div class="imagen col-3">
                 <div class="img-container"> 
                   <img src="@/assets/img/logo-ferreteria.png" alt="">
@@ -185,7 +213,7 @@
                   </div>
                   <div class="col-10">
                     <h6 class="mb-0">
-                          ${{item.precio}}
+                          {{item.precio_de_venta}}
                     </h6>
                   </div>
               </div>
@@ -205,6 +233,9 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
+
 export default {
     data() {
         return {
@@ -213,43 +244,56 @@ export default {
                 producto : {nombre: ''},
                 productoModal : false,
                 cantidad : 1,
+                observaciones : '',
                 lineas : [],
                 filtro: '',
                 listado_productos: [],
-
+                item : {detalle:{personas:''}}
         }
     },
     mounted() {
-        this.datosIniciales();
+        //this.datosIniciales(); 
+        this.obtenerProductos();
+    },
+    computed: {
+      ...mapGetters({
+        productos : 'getProductos',
+        mesas : 'mesas',
+
+      })
     },
     methods: {
-      datosIniciales(){
-          console.log('Base url: '+this.axios.defaults.baseURL);
-
-            //Productos
-            var producto = new Object();
-            producto.id = '1';
-            producto.nombre = 'Sandwich de Milanesa';
-            producto.descripcion = 'Especial';
-            producto.codigo = '1234';
-            producto.categoria = 'Sandwich';
-            producto.precio_de_venta = '240';
-            producto.precio = '240';
-            producto.stock_minimo = '5';
-            //producto.stock = '5';
-            var producto1 = new Object();
-            producto1.id = '2';
-            producto1.nombre = 'Pizza Napolitana';
-            producto1.descripcion = 'Mortadela con Queso';
-            producto1.codigo = '4321';
-            producto1.categoria = 'Pizza';
-            producto1.precio_de_venta = '$200';
-            producto1.precio = '200';
-            producto1.stock_minimo = '7';
-            //producto1.stock = '7';
-            this.listado_productos.push(producto);
-            this.listado_productos.push(producto1);
-      }
+    ...mapActions(['obtenerProductos']),
+      getProducto(item){
+        this.producto = item;
+        this.productoModal = false;
+      },
+        agregarProducto(){
+          //SI LA MESA ESTA LIBRE, LA ABRE
+          if(this.item.estado == 'libre'){
+            //this.item.detalle.cliente = this.cliente;
+            this.item.detalle.personas= this.comensales;
+            this.item.estado= 'ocupada';
+            //Igualamos la informacion de la mesa a la mesa auxiliar que muestra la info
+            //this.mesa_detalle = this.mesas[this.mesa_detalle.id];
+            //Cerramos el modal
+            this.mesaModal = false;
+          }
+          //AGREGAR PRODUCTO
+          if(this.producto != ''){
+              var linea = new Object();
+              linea.cantidad = this.cantidad;
+              linea.producto = this.producto;
+              linea.observaciones = this.observaciones;
+              linea.subtotal = this.cantidad * this.producto.precio_de_venta;
+              this.item.linea_venta.push(linea);
+              this.item.total += linea.subtotal;
+              this.cantidad = 1;
+              this.observaciones = '';
+          }else{
+              console.log('Producto vacio')
+          }
+        }
     },
 }
 </script>

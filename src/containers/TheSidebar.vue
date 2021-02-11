@@ -5,11 +5,14 @@
     :show="show"
     @update:show="(value) => $store.commit('set', ['sidebarShow', value])"
   >
+
     <CSidebarBrand  class="d-md-down-none" to="/">
        <h3 class="logo">Restaurante</h3>
     </CSidebarBrand>
 
-    <CRenderFunction flat :content-to-render="$options.nav"/>
+
+
+    <CRenderFunction flat :content-to-render="computedSidebar"/>
     <CSidebarMinimizer
       class="d-md-down-none"
       @click.native="$store.commit('set', ['sidebarMinimize', !minimize])"
@@ -19,11 +22,54 @@
 
 <script>
 import nav from './_nav'
+const allItems = [
+  {
+    _name: "CSidebarNavItem",
+    name: "Dashboard",
+    to: "/dashboard"
+  },
+  {
+    _name: "CSidebarNavItem",
+    name: "User profile",
+    to: "/theme/colors",
+    roles: ["user", "admin"]
+  },
+  {
+    _name: "CSidebarNavItem",
+    name: "Admin panel",
+    to: "/admin-panel",
+    roles: ["admin"]
+  }
+];
 
 export default {
   name: 'TheSidebar',
   nav,
+  data() {
+    return {
+            role: "admin"
+
+    }
+  },
   computed: {
+    currentItems() {
+      //sidebar items are not shown until role is known
+      if (this.role === "unknown") {
+        return [];
+      }
+      return nav.filter(item => {
+        console.log(item);
+        return !item.roles || item.roles.includes(this.role);
+      });
+    },
+    computedSidebar() {
+      return [
+        {
+          _name: "CSidebarNav",
+          _children: this.currentItems
+        }
+      ];
+    },
     show () {
       return this.$store.state.sidebarShow 
     },

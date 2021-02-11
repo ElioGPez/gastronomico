@@ -46,6 +46,7 @@
     <CRow>
       <CCol sm="12">
           <CTableWrapper
+          :ruta="'productos_editar'"
           :items="productos"
           :fields="getCabecera()"
           hover
